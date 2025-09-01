@@ -7,7 +7,6 @@
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
   - [Folder Layout](#folder-layout)
@@ -36,9 +35,6 @@ This is primarily for **retro / demo / archival** purposes. Modern projects shou
 - ✅ Large meshes via `ImGuiBackendFlags_RendererHasVtxOffset`.
 - ✅ `IMGUI_USE_BGRA_PACKED_COLOR` supported.
 - ✅ **Per-command clipping in software** (emulates scissor using Sutherland–Hodgman polygon clipping against `ImDrawCmd::ClipRect`).
-
-## Screenshots
-*(Optional – drop images here of the demo window, FPS overlay, etc.)*
 
 ## Requirements
 - **OS:** Windows 98/2000/XP and later (tested primarily on modern Windows via legacy SDK headers).
