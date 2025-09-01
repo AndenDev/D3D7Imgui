@@ -1,4 +1,4 @@
-# D3d7-Imgui
+# D3D7 - Imgui
 
 > Dear ImGui renderer backend for **Direct3D 7** with a minimal Win32 example app.
 
@@ -37,6 +37,8 @@ This is primarily for **retro / demo / archival** purposes. Modern projects shou
 - ✅ `IMGUI_USE_BGRA_PACKED_COLOR` supported.
 - ✅ **Per-command clipping in software** (emulates scissor using Sutherland–Hodgman polygon clipping against `ImDrawCmd::ClipRect`).
 
+## Screenshots
+*(Optional – drop images here of the demo window, FPS overlay, etc.)*
 
 ## Requirements
 - **OS:** Windows 98/2000/XP and later (tested primarily on modern Windows via legacy SDK headers).
@@ -44,7 +46,7 @@ This is primarily for **retro / demo / archival** purposes. Modern projects shou
 - **SDK/Libraries:**
   - `ddraw.h`, `d3d.h` (DirectX 7 era headers)
   - Link with **`ddraw.lib`** and **`dxguid.lib`**
-  - Dear ImGui source (e.g., `imgui/` folder)
+  - Dear ImGui source (e.g., `ImGui/` folder)
 
 > **Note:** You do **not** need the full “DirectX 7 SDK” if your compiler already ships legacy DirectDraw/Direct3D 7 headers/libs. On modern setups these typically come with the Windows SDK / VS toolchain for compatibility.
 
@@ -53,50 +55,65 @@ This is primarily for **retro / demo / archival** purposes. Modern projects shou
 ### Folder Layout
 ```
 <root>/
-  ImGui/                  # Dear ImGui sources (imgui.h, imgui.cpp, etc.)
-  src/
-    imgui_impl_dx7.h
-    imgui_impl_dx7.cpp   # The renderer backend
-    main_dx7_example.cpp # The Win32+D3D7 example app
-  README.md
+  ImGui/
+    imgui.h
+    imgui.cpp
+    imgui_demo.cpp        (optional)
+    imgui_draw.cpp
+    imgui_tables.cpp
+    imgui_widgets.cpp
+    imgui_internal.h
+    imgui_impl_win32.h
+    imgui_impl_win32.cpp
+    imconfig.h (optional)
+    # stb_* headers, etc.
+  imgui_impl_dx7.h
+  imgui_impl_dx7.cpp      # The D3D7 renderer backend
+  example_win32_directx7.cpp  # Win32 + D3D7 sample entry point
+  imgui.ini               # Runtime settings (generated)
 ```
 
 ### Build (Visual Studio)
-1. Create a **Win32 Console** or **Windows** C/C++ project.
-2. Add files:
-   - `src/imgui_impl_dx7.cpp`, `src/main_dx7_example.cpp`
-   - Dear ImGui core files: `imgui.cpp`, `imgui_draw.cpp`, `imgui_tables.cpp`, `imgui_widgets.cpp`, and optionally `imgui_demo.cpp`.
-3. Include directories:
-   - `ImGui/` and `src/`
-4. Linker → Input → **Additional Dependencies**:
-   - `ddraw.lib; dxguid.lib;` (plus the defaults)
-5. Subsystem:
-   - Console or Windows (example uses a Win32 window; either is fine).
-6. Build **x86** (recommended for best compatibility) or x64 if your toolchain supports it.
+1. Create a **Win32** or **Console** C/C++ project.
+2. Add **source files** to the project:
+   - `imgui_impl_dx7.cpp`
+   - `ImGui/imgui_impl_win32.cpp`
+   - `example_win32_directx7.cpp`
+   - **ImGui core:** `ImGui/imgui.cpp`, `ImGui/imgui_draw.cpp`, `ImGui/imgui_tables.cpp`, `ImGui/imgui_widgets.cpp` *(optional: `ImGui/imgui_demo.cpp`)*
+3. **Include directories**:
+   - `.` (project root)
+   - `ImGui`
+4. **Linker → Input → Additional Dependencies**:
+   - `ddraw.lib; dxguid.lib;` (plus defaults)
+5. **Subsystem**:
+   - *Windows* (GUI app) or *Console* — both work with this sample.
+6. Build **Win32 (x86)** for maximum compatibility, or **x64** if desired.
 
 ### Build (CMake, optional)
 ```cmake
-cmake_minimum_required(VERSION 3.20)
-project(imgui_dx7_example LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.16)
+project(D3D7imgui LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(imgui_dx7_example
-  src/imgui_impl_dx7.cpp
-  src/main_dx7_example.cpp
+# WIN32 builds a GUI app without a console. Remove WIN32 to keep a console window.
+add_executable(D3D7imgui WIN32
+  imgui_impl_dx7.cpp
+  example_win32_directx7.cpp
   ImGui/imgui.cpp
   ImGui/imgui_draw.cpp
   ImGui/imgui_tables.cpp
   ImGui/imgui_widgets.cpp
-  ImGui/imgui_demo.cpp)
+  ImGui/imgui_demo.cpp       # optional: remove if you don't want the demo window
+  ImGui/imgui_impl_win32.cpp
+)
 
-target_include_directories(imgui_dx7_example PRIVATE ImGui src)
-
-target_link_libraries(imgui_dx7_example PRIVATE ddraw dxguid)
+target_include_directories(D3D7imgui PRIVATE . ImGui)
+target_link_libraries(D3D7imgui PRIVATE ddraw dxguid)
 ```
 
-> **Tip:** If the linker can’t find `ddraw.lib`/`dxguid.lib`, ensure your Windows SDK is installed and your VC toolset is set correctly.
+> **Tip:** If the linker can’t find `ddraw.lib`/`dxguid.lib`, ensure your Windows SDK is installed and the correct VC toolset is active.
 
 ## How It Works
 - **Vertex format:** Pre-transformed **XYZRHW** with packed **ARGB** color and one set of UVs (`FVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1`).
