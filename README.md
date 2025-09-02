@@ -193,8 +193,6 @@ This sample disables depth entirely; ImGui doesn’t need it. You can enable Z i
 - Optional: support paletted textures for true retro flavor.
 - Optional: add vsync / timing controls and FPS cap.
 
-## License
-Choose a license that fits your needs (e.g., MIT for your code). Dear ImGui itself is MIT-licensed—respect its license when distributing.
 
 ## Acknowledgments
 - Omar Cornut and all Dear ImGui contributors.
